@@ -5,9 +5,10 @@ import {
   updatePlayer,
   deletePlayer,
   createPlayer,
-  getPlayerByUsername,
+  getPlayerByUsername, checkIfPlayerExistsByID, checkIfPlayerExistsByName,
 } from "../controller/playerController.js";
 import checkForNeededPlayerFields from "../middleware/checkForValidPlayer.js";
+import hashPassword from "../middleware/hashPassword.js";
 
 const router = express.Router();
 
@@ -15,9 +16,11 @@ const router = express.Router();
 router.get("/", getPlayers);
 router.get("/byId/:id", getPlayer);
 router.get("/byName/:username", getPlayerByUsername);
+router.get("/check/byId/:id", checkIfPlayerExistsByID);
+router.get("/check/byName/:username", checkIfPlayerExistsByName);
 router.get("/:id", getPlayer);
 router.patch("/:id", updatePlayer);
 router.delete("/:id", deletePlayer);
-router.post("/",checkForNeededPlayerFields, createPlayer);
+router.post("/", checkForNeededPlayerFields, hashPassword, createPlayer);
 
 export default router;

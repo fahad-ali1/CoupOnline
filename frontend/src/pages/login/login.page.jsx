@@ -19,6 +19,7 @@ const cookies = new Cookies();
 const LoginPage = () => {
   const navigate = useNavigate();
   const username = useRef();
+  const password = useRef();
   const [LocalCookie, setLocalCookie] = useState(cookies.get("PersonalCookie"));
   // const [username, setUsername] = useState([]);
   const [verified, setVerified] = useState(false);
@@ -26,6 +27,11 @@ const LoginPage = () => {
   const handleUsernameInput = (e) => {
     // setUsername(e.target.value);
     username.current = e.target.value;
+  };
+
+  const handlePasswordInput = (e) => {
+    // setUsername(e.target.value);
+    password.current = e.target.value;
   };
 
   const handleCreateClick = () => {
@@ -63,6 +69,13 @@ const LoginPage = () => {
         type="username"
         placeholder="Username"
         onChange={handleUsernameInput}
+        className="w-200"
+      ></Input>
+      <h2>Enter your Password:</h2>
+      <Input
+        type="password"
+        placeholder="Password"
+        onChange={handlePasswordInput}
         className="w-200"
       ></Input>
       <Button onClick={handleLoginClick}>Login</Button>

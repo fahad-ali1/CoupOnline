@@ -25,7 +25,24 @@ export const getPlayerFromRepo = async (query) => {
   try {
     console.log(query);
     const player = await Player.findOne(query);
+
     return player;
+  } catch (e) {
+    console.log(e);
+    throw new Error(`Error while fetching player: ${query.id}`);
+  }
+};
+
+/**
+ * Retrivies true or false if a username is unique
+ *
+ * @param {Object} query The query object to find a specific player
+ * @throws {Error} Throws an error if there's an issue fetching the player
+ */
+export const checkIfPlayerExistsInRepo = async (query) => {
+  try {
+    const player = await Player.findOne(query);
+    return !!player;
   } catch (e) {
     console.log(e);
     throw new Error(`Error while fetching player: ${query.id}`);

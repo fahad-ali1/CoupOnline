@@ -1,13 +1,12 @@
-import { terminal } from 'virtual:terminal'
 import axios from "axios";
 
 
-const verifyAccount = async (username, setVerified) => {
+const verifyAccount = async (username) => {
   try {
-    const response = await axios.get(`http://localhost:8080/players/byName/${username}`)
+    const exists = await axios.get(`http://localhost:8080/players/check/byName/${username}`)
       .catch(() => {return false})
-    if (response.status === 200) {
-      return true
+    if (exists.status === 200) {
+      return exists.data
     }
   }catch (e){
     return false

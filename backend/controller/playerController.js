@@ -3,7 +3,7 @@ import {
   getPlayerFromRepo,
   updatePlayerInRepo,
   deletePlayerInRepo,
-  createPlayerInRepo,
+  createPlayerInRepo, checkIfPlayerExistsInRepo,
 } from "../repository/playerRepository.js";
 
 // Handle 404 errors to show user when a player is not found
@@ -56,6 +56,27 @@ export const getPlayer = async (req, res) => {
 };
 
 /**
+ * Checks if a player exists by ID from the database.
+ *
+ * @param {Request} req The request object
+ * @param {Response} res The response object
+ */
+export const checkIfPlayerExistsByID = async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  try {
+    const player = await checkIfPlayerExistsInRepo({ _id: id });
+    if (!player) {
+      handlePlayerNotFound(res, id);
+    } else {
+      res.status(200).send(player);
+    }
+  } catch (e) {
+    handleError(res, 500, `Failed to fetch player ${id}: ${e.message}`);
+  }
+};
+
+/**
  * Retrieve a player by username from the repository
  *
  * @param {Request} req The request object
@@ -65,11 +86,11 @@ export const getPlayerByUsername = async (req, res) => {
   const { username } = req.params;
   console.log(username);
   try {
-    const user = await getPlayerFromRepo({ userName: username });
-    if (user) {
-      res.status(200).send(user);
+    const player = await getPlayerFromRepo({ userName: username });
+    if (player){
+      res.status(200).send(player)
     } else {
-      handlePlayerNotFound(res, username);
+      handlePlayerNotFound(res, id)
     }
   } catch (error) {
     handleError(
@@ -77,6 +98,23 @@ export const getPlayerByUsername = async (req, res) => {
       500,
       `Failed to fetch player ${username}: ${error.message}`
     );
+  }
+};
+
+/**
+ * Checks if a player exists by ID from the database.
+ *
+ * @param {Request} req The request object
+ * @param {Response} res The response object
+ */
+export const checkIfPlayerExistsByName = async (req, res) => {
+   const { username } = req.params;
+  console.log(username);
+  try {
+    const exists = await checkIfPlayerExistsInRepo({ userName: username });
+    res.status(200).send(exists)
+  } catch (e) {
+    handleError(res, 500, `Failed to fetch player ${username}: ${e.message}`);
   }
 };
 /**

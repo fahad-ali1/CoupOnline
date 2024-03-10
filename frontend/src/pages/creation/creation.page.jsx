@@ -16,6 +16,8 @@ const cookies = new Cookies();
 const CreationPage = () => {
   const navigate = useNavigate();
   const [userName, setUserName] = useState("");
+  const [Password, setPassword] = useState("");
+  const [ConfirmPassword, setConfirmPassword] = useState("");
   const [CurrentCookie, setCurrentCookie] = useState(
     cookies.get("PersonalCookie")
   );
@@ -42,6 +44,14 @@ const CreationPage = () => {
           window.alert("Input an Email.");
           return;
         }
+        if (Password === "") {
+          window.alert("Input a Password");
+          return;
+        }
+        if (Password !== ConfirmPassword) {
+          window.alert("Passwords do not Match");
+          return;
+        }
         // src: https://www.simplilearn.com/tutorials/javascript-tutorial/email-validation-in-javascript
         const emailRegex =
           /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -52,7 +62,7 @@ const CreationPage = () => {
         const makeNewAccount = async () => {
           const response = await axios.post(
             "http://localhost:8080/players",
-            { userName: userName, screenName: screenName, email: Email },
+            { userName: userName, screenName: screenName, password: Password, email: Email },
             {
               headers: {
                 Accept: "application/json",
@@ -61,13 +71,21 @@ const CreationPage = () => {
             }
           );
 
-          cookies.set("PersonalCookie", response.data._id);
-          setCurrentCookie(cookies.get("PersonalCookie"));
+          if (response.status === 200){
+            cookies.set("PersonalCookie", response.data._id);
+            setCurrentCookie(cookies.get("PersonalCookie"));
+            navigate("/room");
+          }else {
+            //Replace with more detailed
+            window.alert(`Failure, status ${response.status}`)
+          }
+
+
+
         };
 
         if (CreatedCookie === true) {
           makeNewAccount();
-          navigate("/room");
         }
       });
       setCreatedCookie(false);
@@ -82,16 +100,27 @@ const CreationPage = () => {
         type="username"
         onChange={(e) => setUserName(e.target.value)}
       ></Input>
-      <br />
+      <br/>
+      <p>Password</p>
+      <Input
+        type="password"
+        onChange={(e) => setPassword(e.target.value)}
+      ></Input>
+      <p>Confirm Password</p>
+      <Input
+        type="password"
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      ></Input>
+      <br/>
       <p>Screen Name</p>
       <Input
         type="screenname"
         onChange={(e) => setScreenName(e.target.value)}
       ></Input>
-      <br />
+      <br/>
       <p>Email</p>
       <Input type="email" onChange={(e) => setEmail(e.target.value)}></Input>
-      <br />
+      <br/>
       <Button
         onClick={() => {
           setCreatedCookie(true);
