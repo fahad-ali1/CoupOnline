@@ -11,6 +11,11 @@ const handlePlayerNotFound = (res, id) => {
   res.status(404).send(`Player ${id} not found`);
 };
 
+// Handle 404 errors to show user when a player is not found
+const handlePlayerBadPassword = (res) => {
+  res.status(404).send(`Bad Password`);
+};
+
 // Handle errors
 const handleError = (res, status, message) => {
   res.status(status).send(message);
@@ -40,15 +45,19 @@ export const getPlayers = async (req, res) => {
  * @param {Request} req The request object
  * @param {Response} res The response object
  */
-export const getPlayer = async (req, res) => {
-  const { id } = req.params;
+export const getPlayerByIdPasswordAuth = async (req, res) => {
+  const { id, password } = req.params;
   console.log(id);
   try {
     const player = await getPlayerFromRepo({ _id: id });
-    if (!player) {
-      handlePlayerNotFound(res, id);
+    if (player){
+      if(player["password"] === password){
+        res.status(200).send(player)
+      }else{
+        handlePlayerBadPassword(res)
+      }
     } else {
-      res.status(200).send(player);
+      handlePlayerNotFound(res, id)
     }
   } catch (e) {
     handleError(res, 500, `Failed to fetch player ${id}: ${e.message}`);
@@ -82,15 +91,18 @@ export const checkIfPlayerExistsByID = async (req, res) => {
  * @param {Request} req The request object
  * @param {Response} res The response object
  */
-export const getPlayerByUsername = async (req, res) => {
-  const { username } = req.params;
-  console.log(username);
+export const getPlayerByUsernamePasswordAuth = async (req, res) => {
+  const { username, password } = req.params;
   try {
     const player = await getPlayerFromRepo({ userName: username });
     if (player){
-      res.status(200).send(player)
+      if(player["password"] === password){
+        res.status(200).send(player)
+      }else{
+        handlePlayerBadPassword(res)
+      }
     } else {
-      handlePlayerNotFound(res, id)
+      handlePlayerNotFound(res, username)
     }
   } catch (error) {
     handleError(
@@ -109,7 +121,6 @@ export const getPlayerByUsername = async (req, res) => {
  */
 export const checkIfPlayerExistsByName = async (req, res) => {
    const { username } = req.params;
-  console.log(username);
   try {
     const exists = await checkIfPlayerExistsInRepo({ userName: username });
     res.status(200).send(exists)

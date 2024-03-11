@@ -1,7 +1,7 @@
 import Cookies from "universal-cookie";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import verifyAccount from "../../actions/verifyAccount.js";
+import accountExists from "../../actions/verifyAccount.js";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input.jsx";
@@ -31,7 +31,7 @@ const CreationPage = () => {
         window.alert("Input a Username.");
         return;
       }
-      verifyAccount(userName).then((res) => {
+      accountExists(userName).then((res) => {
         if (res === true) {
           window.alert("Account with this username already exists.");
           return;

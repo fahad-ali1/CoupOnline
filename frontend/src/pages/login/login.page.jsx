@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { terminal } from "virtual:terminal";
 
 import TextField from "../../components/textfield/textfield.component.jsx";
-import verifyAccount from "../../actions/verifyAccount";
+import accountExists from "../../actions/verifyAccount";
 import Cookies from "universal-cookie";
 import retrieveAccountById from "../../actions/retrieveAccountById.js";
 import retrieveAccountByName from "../../actions/retrieveAccountByName.js";
@@ -39,13 +39,16 @@ const LoginPage = () => {
   };
 
   const handleLoginClick = async () => {
-    const verif = await verifyAccount(username, setVerified);
-    terminal.log(verif);
+    const verif = await accountExists(username.current);
     if (verif) {
-      retrieveAccountByName(username).then((res) => {
-        cookies.set("PersonalCookie", res.data._id);
+      retrieveAccountByName(username.current, password.current).then((res) => {
+        if(res.status === 200){
+          cookies.set("PersonalCookie", res.data._id);
+          navigate("/room");
+        }else{
+          window.alert("Bad Password")
+        }
       });
-      navigate("/room");
     } else {
       window.alert("Account Does not Exist.");
     }

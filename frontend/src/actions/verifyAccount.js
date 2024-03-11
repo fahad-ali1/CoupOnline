@@ -1,8 +1,10 @@
 import axios from "axios";
 
 
-const verifyAccount = async (username) => {
+const accountExists = async (username) => {
   try {
+    console.log("CHECK EXIST")
+    console.log(username)
     const exists = await axios.get(`http://localhost:8080/players/check/byName/${username}`)
       .catch(() => {return false})
     if (exists.status === 200) {
@@ -14,4 +16,4 @@ const verifyAccount = async (username) => {
   return false
 }
 
-export default verifyAccount;
+export default accountExists;
